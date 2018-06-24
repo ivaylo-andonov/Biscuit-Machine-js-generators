@@ -1,0 +1,28 @@
+{
+  "name": "biscuit-machine",
+  "version": "1.0.0",
+  "description": "Biscuit Machine",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Ivaylo Andonov",
+  "license": "MIT",
+  "dependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-1": "^6.24.1",
+    "babel-preset-env": "^1.7.0",
+    "express": "^4.16.2",
+    "html-react-parser": "^0.4.1",
+    "jquery": "^3.3.1",
+    "prop-types": "^15.6.0",
+    "react": "^16.4.1",
+    "react-bootstrap": "^0.32.1",
+    "react-dom": "^16.4.1",
+    "webpack": "^3.10.0",
+    "webpack-dev-middleware": "^2.0.4"
+  },
+  "devDependencies": {}
+}
