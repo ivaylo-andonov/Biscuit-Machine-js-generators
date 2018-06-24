@@ -5,6 +5,7 @@ export class Motor extends Device {
     constructor() {
         super();
         this.isOn = true;
+        this.pulse = pulseConst;
         this.deviceName = this.constructor.name;
     }
 
@@ -16,18 +17,13 @@ export class Motor extends Device {
         this.isOn = true;
     }
 
-    process(isOn, delay) {
+    process(isOn, machine, delay) {
         console.log("Motor is called")
         return new Promise((resolve, reject) => {
             if (isOn) {
-                setTimeout(function () {
-                    console.log("Motor is pulsed")
-                    resolve(pulseConst)
-                }, delay);
-
+                super.processIt('Motor', resolve, this.pulse, delay);
             } else {
-                return;
-                console.log("Motor is off")
+                reject("Motor is off")
             }
         });
     }

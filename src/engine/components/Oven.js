@@ -6,7 +6,7 @@ export const maxBakingTemperature = 240;
 export class Oven extends Device {
     constructor() {
         super();
-        
+
         this.temperature = 0;
         this.warmUpInterval = null;
         this.isHeatingElementOn = false;
@@ -29,20 +29,21 @@ export class Oven extends Device {
         }
 
         self.warmUpInterval = setInterval(function () {
+
             if (self.temperature >= minBakingTemperature) {
                 clearInterval(self.warmUpInterval);
                 self.isHeatingElementOn = false;
-                callback(true);
                 console.log("Oven is ready");
+                callback(true);
             }
             else {
-                self.temperature += 50;
+                self.temperature += 40;
                 console.log("Oven`s temperature is:" + self.temperature);
             }
         }, 1000);
     }
 
-    process(isHeatingElementOn, delay) {
+    process(isHeatingElementOn, machine, delay) {
         console.log("Oven is called");
         this.isHeatingElementOn = isHeatingElementOn;
         isHeatingElementOn ? this.temperature += 50 : this.temperature;
@@ -53,11 +54,11 @@ export class Oven extends Device {
                     console.log("Oven is overheating!")
                     reject("Oven is overheated")
                 }, delay);
+            }
+            else if (!machine.motor.isOn) {
+                reject('Oven is off')
             } else {
-                setTimeout(function () {
-                    console.log("Oven is baking")
-                    resolve("Bisquit")
-                }, delay);
+                super.processIt('Oven', resolve, this.temperature, delay);
             }
         });
     }

@@ -2,15 +2,15 @@ export default class Device {
 
     constructor() {
         this.deviceName = null;
-        this.inInProcess = false;
+        this.isInProgress = false;
     }
 
-    process(delay) {
-        this.inInProcess = true;
-        console.log("Processing by: " + this.deviceName);
+    processIt(deviceName, resolve, output, delay) {
+        this.isInProgress = true;
         setTimeout(function () {
-            console.log("Processed by: " + this.deviceName);
-            this.inInProcess = false;
+            this.isInProgress = false;
+            console.log(`${deviceName} processed the biscuit successfuly`);
+            resolve(output);
         }, delay);
     }
 }

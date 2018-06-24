@@ -14,7 +14,11 @@ export class BiscuitMachine {
         this.pulse = null;
         this.biscuitsCount = 0;
 
+        this.interval;
+
+        this.circleConveyor = this.circleConveyor.bind(this);
         this.conveyorCircleStart = this.conveyorCircleStart.bind(this);
+        this.produceBiscuit = this.produceBiscuit.bind(this)
     }
 
     start() {
@@ -31,29 +35,33 @@ export class BiscuitMachine {
     }
 
     conveyorCircleStart(isON) {
-        this.motor.process(isON, 2000)
-            .then(pulse => this.extruder.process(pulse, 2000))
-            .then(() => this.stamper.process('pulse', 2000))
-            .then(() => this.oven.process(false))
-            .then(temperature => this.produceBiscuit(temperature))
-            .then(biscuit => console.log(biscuit))
-            .catch(error => {console.log(error);})
-            .then(() => this.circleConveyor(this.motor.isOn))
+        this.circleConveyor();
+        this.interval = setInterval(this.circleConveyor, 10 * 1000)
     }
 
-    circleConveyor(isOn){
-        this.conveyorCircleStart(isOn)
+    circleConveyor() {
+        this.motor.process(true, this, 2 * 1000)
+            .then(pulse => this.extruder.process('pulse', this, 2 * 1000))
+            .then(() => this.stamper.process('pulse', this, 2 * 1000))
+            .then(() => this.oven.process(false, this, 2 * 1000))
+            .then(temperature => this.produceBiscuit(temperature, 1 * 1000))
+            .catch(error => {
+                console.log(error);
+                clearInterval(this.interval)
+            })
     }
 
-    produceBiscuit(temperature) {
+    produceBiscuit(temperature, delay) {
         if (temperature < minBakingTemperature || temperature > maxBakingTemperature) {
             throw ('Biscuit is not cooked.Temperature is' + temperature)
         }
         else {
-            let biscuit = new Biscuit(true);
-            this.biscuitsCount += 1;
-            console.log(this.biscuitsCount);
-            return biscuit
+            setTimeout(() => {
+                console.log('New biscuit is produced!');
+                this.biscuitsCount += 1;
+                console.log('Biscuits count: ' + this.biscuitsCount)
+                console.log(new Biscuit(true));
+            }, delay);
         }
     }
 

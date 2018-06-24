@@ -7,19 +7,16 @@ export class Extruder extends Device {
         this.deviceName = this.constructor.name;
     }
 
-    process(pulse, delay) {
+    process(pulse,machine, delay) {
         console.log("Extruder is called")
         return new Promise((resolve, reject) => {
-            if (pulse === pulseConst) {
-                setTimeout(function () {
-                    console.log("Extruder is pulsed")
-                    resolve();
-                }, delay);
+            if (pulse === pulseConst && machine.motor.isOn) {
+                super.processIt('Extruder', resolve, null, delay);
             } else {
                 reject("Extruder is off")
             }
         });
     }
 
-    
+
 }
