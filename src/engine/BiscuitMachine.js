@@ -32,6 +32,7 @@ export class BiscuitMachine {
     stop() {
         this.isOn = false;
         this.oven.turnOff();
+        this.biscuitsCount.val = 0;
     }
 
     pause() {
@@ -41,11 +42,11 @@ export class BiscuitMachine {
 
     // Conveyor revolution
     conveyorCircleStart() {
-        this.motor.process(this.isOn, this.isPaused, 2 * sec)
-            .then(pulse => this.extruder.process(pulse, this.isOn, this.isPaused, 2 * sec))
-            .then(() => this.stamper.process(this.motor.pulse, this.isOn, this.isPaused, 2 * sec))
-            .then(() => this.oven.process(this.isOn, 2 * sec))
-            .then(temperature => this.produceBiscuit(temperature, 1 * sec))
+        this.motor.process(this.isOn, this.isPaused, 1 * sec)
+            .then(pulse => this.extruder.process(pulse, this.isOn, this.isPaused, 1 * sec))
+            .then(() => this.stamper.process(this.motor.pulse, this.isOn, this.isPaused, 1 * sec))
+            .then(() => this.oven.process(this.isOn, 1 * sec))
+            .then(temperature => this.produceBiscuit(temperature, 0.5 * sec))
             .then(() => this.conveyorCircleStart())
             .catch(error => {
                 console.log(error);
