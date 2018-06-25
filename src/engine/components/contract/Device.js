@@ -1,4 +1,4 @@
-import { observable } from "mobx"
+import { observable } from 'mobx';
 
 export default class Device {
 
@@ -8,7 +8,7 @@ export default class Device {
     }
 
     processIt(deviceName, resolve, output, delay) {
-        this.isInProcess.set(true);;
+        this.isInProcess.set(true);
         setTimeout(() => {
             this.isInProcess.set(false);
             console.log(`${deviceName} processed the biscuit successfuly`);

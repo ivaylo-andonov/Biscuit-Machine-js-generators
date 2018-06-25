@@ -1,5 +1,8 @@
 import Biscuit from './../products/Biscuit';
-import { minBakingTemperature, maxBakingTemperature } from './components/Oven'
+import { observable } from 'mobx';
+import { minBakingTemperature, maxBakingTemperature } from './components/Oven';
+
+export const sec = 1000;
 
 export class BiscuitMachine {
 
@@ -11,36 +14,38 @@ export class BiscuitMachine {
         this.extruder = build.extruder;
         this.stamper = build.stamper;
         this.oven = build.oven;
-        this.pulse = null;
 
-        this.biscuits = [];
-        this.interval;
+        this.isOn = false;
         this.isPaused = false;
+        this.biscuitsCount = observable({val: 0});
 
         this.conveyorCircleStart = this.conveyorCircleStart.bind(this);
         this.produceBiscuit = this.produceBiscuit.bind(this)
     }
 
     start() {
-        this.motor.turnOn();
+        this.isOn = true;
+        console.log('Machine is started');
         this.oven.turnOn(this.conveyorCircleStart);
-        this.isPaused = false;
     }
 
     stop() {
-        this.motor.turnOff();
+        this.isOn = false;
+        this.oven.turnOff();
     }
 
     pause() {
         this.isPaused = true;
+        this.isOn = false;
     }
 
+    // Conveyor revolution
     conveyorCircleStart() {
-        this.motor.process(true, this, 2 * 1000)
-            .then(pulse => this.extruder.process(pulse, this, 2 * 1000))
-            .then(() => this.stamper.process(this.motor.pulse, this, 2 * 1000))
-            .then(() => this.oven.process(false, this, 2 * 1000))
-            .then(temperature => this.produceBiscuit(temperature, 2 * 1000))
+        this.motor.process(this.isOn, this.isPaused, 2 * sec)
+            .then(pulse => this.extruder.process(pulse, this.isOn, this.isPaused, 2 * sec))
+            .then(() => this.stamper.process(this.motor.pulse, this.isOn, this.isPaused, 2 * sec))
+            .then(() => this.oven.process(this.isOn, 2 * sec))
+            .then(temperature => this.produceBiscuit(temperature, 1 * sec))
             .then(() => this.conveyorCircleStart())
             .catch(error => {
                 console.log(error);
@@ -49,18 +54,18 @@ export class BiscuitMachine {
 
     produceBiscuit(temperature, delay) {
         if (temperature < minBakingTemperature || temperature > maxBakingTemperature) {
-            throw ('Biscuit is not cooked.Temperature is' + temperature)
+            throw ('Biscuit is not cooked well.Temperature is' + temperature)
         }
-        else if (!this.motor.isOn) {
+        else if (!this.isOn) {
             throw ('Machine is off');
         }
         else {
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
                     var biscuit = new Biscuit(true);
-                    this.biscuits.push(biscuit);
-                    console.log('New biscuit is produced!' + biscuit.type);
-                    console.log('Biscuits count: ' + this.biscuits.length);
+                    console.log('New biscuit is produced!');
+                    console.log(biscuit);
+                    this.biscuitsCount.val++;
                     resolve(biscuit)
                 }, delay);
             });

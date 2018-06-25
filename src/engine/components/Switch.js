@@ -6,7 +6,15 @@ export class Switch extends Device {
     this.deviceName = this.constructor.name;
   }
 
-  doProcess() {
-    super.process();
+  start(machine) {
+    machine.start();
+  }
+
+  stop(machine) {
+    machine.stop();
+  }
+
+  pause(machine) {
+    machine.pause();
   }
 }

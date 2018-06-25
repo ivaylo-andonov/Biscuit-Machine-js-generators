@@ -8,6 +8,7 @@ export class BiscuitMachineView extends Component {
     render() {
         return (
             <div className="biscuit-machine-container">
+            <h1>Biscuit Machine</h1>
                 {this.props.children}
             </div>
         );

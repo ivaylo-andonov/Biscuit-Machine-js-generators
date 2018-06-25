@@ -8,13 +8,15 @@ export class Stamper extends Device {
 
     }
 
-    process(pulse,machine, delay) {
-        console.log("Stamper is called")
+    process(pulse, isMachineOn, isPaused, delay) {
+        console.log('Stamper is called')
         return new Promise((resolve, reject) => {
-            if (pulse === pulseConst && machine.motor.isOn) {
+            if (pulse === pulseConst && isMachineOn) {
                 super.processIt('Stamper', resolve, null, delay);
+            } else if (isPaused) {
+                console.log('Paused')
             } else {
-                reject("Stamper is off")
+                reject('Machine is off')
             }
         });
     }
