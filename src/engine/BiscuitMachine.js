@@ -12,11 +12,11 @@ export class BiscuitMachine {
         this.stamper = build.stamper;
         this.oven = build.oven;
         this.pulse = null;
-        this.biscuitsCount = 0;
 
+        this.biscuits = [];
         this.interval;
+        this.isPaused = false;
 
-        this.circleConveyor = this.circleConveyor.bind(this);
         this.conveyorCircleStart = this.conveyorCircleStart.bind(this);
         this.produceBiscuit = this.produceBiscuit.bind(this)
     }
@@ -24,6 +24,7 @@ export class BiscuitMachine {
     start() {
         this.motor.turnOn();
         this.oven.turnOn(this.conveyorCircleStart);
+        this.isPaused = false;
     }
 
     stop() {
@@ -31,23 +32,18 @@ export class BiscuitMachine {
     }
 
     pause() {
-
+        this.isPaused = true;
     }
 
-    conveyorCircleStart(isON) {
-        this.circleConveyor();
-        this.interval = setInterval(this.circleConveyor, 10 * 1000)
-    }
-
-    circleConveyor() {
+    conveyorCircleStart() {
         this.motor.process(true, this, 2 * 1000)
-            .then(pulse => this.extruder.process('pulse', this, 2 * 1000))
-            .then(() => this.stamper.process('pulse', this, 2 * 1000))
+            .then(pulse => this.extruder.process(pulse, this, 2 * 1000))
+            .then(() => this.stamper.process(this.motor.pulse, this, 2 * 1000))
             .then(() => this.oven.process(false, this, 2 * 1000))
-            .then(temperature => this.produceBiscuit(temperature, 1 * 1000))
+            .then(temperature => this.produceBiscuit(temperature, 2 * 1000))
+            .then(() => this.conveyorCircleStart())
             .catch(error => {
                 console.log(error);
-                clearInterval(this.interval)
             })
     }
 
@@ -55,13 +51,19 @@ export class BiscuitMachine {
         if (temperature < minBakingTemperature || temperature > maxBakingTemperature) {
             throw ('Biscuit is not cooked.Temperature is' + temperature)
         }
+        else if (!this.motor.isOn) {
+            throw ('Machine is off');
+        }
         else {
-            setTimeout(() => {
-                console.log('New biscuit is produced!');
-                this.biscuitsCount += 1;
-                console.log('Biscuits count: ' + this.biscuitsCount)
-                console.log(new Biscuit(true));
-            }, delay);
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    var biscuit = new Biscuit(true);
+                    this.biscuits.push(biscuit);
+                    console.log('New biscuit is produced!' + biscuit.type);
+                    console.log('Biscuits count: ' + this.biscuits.length);
+                    resolve(biscuit)
+                }, delay);
+            });
         }
     }
 

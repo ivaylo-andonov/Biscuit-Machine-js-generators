@@ -42,13 +42,13 @@ class App extends Component {
 
     render() {
         return (
-            <div className="App">
+            <div className="app-biscuit-machine">
                 <BiscuitMachineView>
-                    <SwitchView onStart={this.handleStart} onPause={this.handlePause} onStop={this.handleStop}/>
-                    <CommonDeviceView device={this.biscuitMachine.motor}/>
-                    <CommonDeviceView device={this.biscuitMachine.extruder}/>
-                    <CommonDeviceView device={this.biscuitMachine.stamper}/>
-                    <CommonDeviceView device={this.biscuitMachine.oven}/>
+                    <SwitchView onStart={this.handleStart} onPause={this.handlePause} onStop={this.handleStop} />
+                    <CommonDeviceView deviceName={"Motor"} isInProcess={this.biscuitMachine.motor.isInProcess} />
+                    <CommonDeviceView deviceName={"Extruder"} isInProcess={this.biscuitMachine.extruder.isInProcess} />
+                    <CommonDeviceView deviceName={"Stamper"} isInProcess={this.biscuitMachine.stamper.isInProcess} />
+                    <CommonDeviceView deviceName={"Oven"} isInProcess={this.biscuitMachine.oven.isInProcess} />
                 </BiscuitMachineView>
             </div>
         );

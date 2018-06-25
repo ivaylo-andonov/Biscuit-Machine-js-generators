@@ -1,17 +1,10 @@
-import React, { Component } from 'react';
+import { observer } from "mobx-react";
+import React from 'react';
 
-export class CommonDeviceView extends Component {
-    constructor(props) {
-        super(props);
-        
-    }
-
-    render() {
-        return (
-            <div className={this.props.device.deviceName}>
-                <div>{this.props.device.deviceName}</div>
-                <div>{this.props.device.isInProcess}</div>
+export const CommonDeviceView = observer((props) => {
+    return (<div>
+                <div>{props.deviceName}</div>
+                <span>Is In process: {props.isInProcess.get() ? "Process.." : ""} </span>
             </div>
-        );
-    }
-}
+    );
+});
