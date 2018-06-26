@@ -25,6 +25,7 @@ export class BiscuitMachine {
 
     start() {
         this.isOn = true;
+        this.isPaused = false;
         console.log('Machine is started');
         this.oven.turnOn(this.conveyorCircleStart);
     }

@@ -13,8 +13,9 @@ export class Extruder extends Device {
             if (pulse === pulseConst && isMachineOn) {
                 super.processIt('Extruder', resolve, null, delay);
             } else if (isPaused) {
-                console.log('Paused')
-            } else {
+                reject('Machine is paused');
+            }
+            else if (!isMachineOn) {
                 reject('Machine is off');
             }
         });

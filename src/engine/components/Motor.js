@@ -14,8 +14,9 @@ export class Motor extends Device {
             if (isMachineOn) {
                 super.processIt('Motor', resolve, this.pulse, delay);
             } else if (isPaused) {
-                console.log('Paused')
-            } else {
+                reject('Machine is paused');
+            }
+            else if (!isMachineOn) {
                 reject('Machine is off');
             }
         });

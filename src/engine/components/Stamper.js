@@ -14,9 +14,10 @@ export class Stamper extends Device {
             if (pulse === pulseConst && isMachineOn) {
                 super.processIt('Stamper', resolve, null, delay);
             } else if (isPaused) {
-                console.log('Paused')
-            } else {
-                reject('Machine is off')
+                reject('Machine is paused');
+            }
+            else if (!isMachineOn) {
+                reject('Machine is off');
             }
         });
     }

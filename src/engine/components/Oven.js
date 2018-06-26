@@ -74,11 +74,11 @@ export class Oven extends Device {
                     console.log('Oven is overheating!');
                     reject('Oven is overheated');
                 }, delay);
+            } else if (isPaused) {
+                reject('Machine is paused');
             }
             else if (!isMachineOn) {
                 reject('Machine is off');
-            } else if (isPaused) {
-                reject('Machine is paused');
             } else {
                 super.processIt('Oven', resolve, this.temperature, delay);
             }
