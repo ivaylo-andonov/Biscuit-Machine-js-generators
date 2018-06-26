@@ -17,7 +17,7 @@ export class BiscuitMachine {
 
         this.isOn = false;
         this.isPaused = false;
-        this.biscuitsCount = observable({val: 0});
+        this.biscuitsCount = observable({ val: 0 });
 
         this.conveyorCircleStart = this.conveyorCircleStart.bind(this);
         this.produceBiscuit = this.produceBiscuit.bind(this)
@@ -45,7 +45,7 @@ export class BiscuitMachine {
         this.motor.process(this.isOn, this.isPaused, 1 * sec)
             .then(pulse => this.extruder.process(pulse, this.isOn, this.isPaused, 1 * sec))
             .then(() => this.stamper.process(this.motor.pulse, this.isOn, this.isPaused, 1 * sec))
-            .then(() => this.oven.process(this.isOn, 1 * sec))
+            .then(() => this.oven.process(this.isOn, this.isPaused, 1 * sec))
             .then(temperature => this.produceBiscuit(temperature, 0.5 * sec))
             .then(() => this.conveyorCircleStart())
             .catch(error => {

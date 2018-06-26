@@ -65,7 +65,7 @@ export class Oven extends Device {
         }, sec);
     }
 
-    process(isMachineOn, delay) {
+    process(isMachineOn, isPaused, delay) {
         console.log('Oven is called');
 
         return new Promise((resolve, reject) => {
@@ -77,6 +77,8 @@ export class Oven extends Device {
             }
             else if (!isMachineOn) {
                 reject('Machine is off');
+            } else if (isPaused) {
+                reject('Machine is paused');
             } else {
                 super.processIt('Oven', resolve, this.temperature, delay);
             }
