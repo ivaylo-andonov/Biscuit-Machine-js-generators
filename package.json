@@ -16,7 +16,7 @@
     "babel-preset-stage-1": "^6.24.1",
     "express": "^4.16.2",
     "html-react-parser": "^0.4.1",
-    "jquery": "^3.3.1",
+    "jquery": "^3.4.0",
     "mobx": "^5.0.3",
     "mobx-react": "^5.2.3",
     "prop-types": "^15.6.0",
