@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { put } from '@redux-saga/core/effects';
-import DeviceView from '../../views/DeviceView'
+import { DeviceView } from '../../views/DeviceView'
 import { shouldResume } from '../BiscuitMachine'
 
 export class Stamper extends Component {

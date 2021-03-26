@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import DeviceView from '../../views/DeviceView'
+import { DeviceView } from '../../views/DeviceView'
 import { shouldResume } from '../BiscuitMachine'
 import { put } from "redux-saga/effects";
 import { store } from '../..'

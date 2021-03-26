@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { Motor, Extruder, Stamper, Oven } from './engine/components';
-import { BiscuitMachineView, SwitchView, BiscuitsView } from './views';
+import { BiscuitMachineView, SwitchView, BiscuitsView, TemperatureView } from './views';
 
 class App extends Component {
     constructor(props) {
@@ -17,6 +17,7 @@ class App extends Component {
                     <Extruder deviceName={'Extruder'} {...this.props} />
                     <Stamper deviceName={'Stamper'} {...this.props} />
                     <Oven deviceName={'Oven'} {...this.props} />
+                    <TemperatureView  {...this.props} />
                     <BiscuitsView biscuitsCount={this.props.biscuitsCount} />
                 </BiscuitMachineView>
             </React.Fragment>

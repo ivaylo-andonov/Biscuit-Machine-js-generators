@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { put } from "redux-saga/effects";
 import { shouldResume } from '../BiscuitMachine'
-
-import DeviceView from '../../views/DeviceView'
+import { DeviceView } from '../../views/DeviceView'
 
 export class Motor extends Component {
 
