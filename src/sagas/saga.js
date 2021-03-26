@@ -1,43 +1,55 @@
-import { put, take, fork, call, cancel } from "redux-saga/effects";
-import * as Devices from '../engine/components';
-import { BiscuitMachine } from '../engine/BiscuitMachine';
-import { store } from '../'
+import { put, take, fork, call, cancel, all } from "redux-saga/effects";
+import { biscuitMachineFactory } from '../engine/BiscuitMachine';
+import * as actions from '../actions'
+import { store } from '..';
 
-function* conveyorStart(machine) {
-  //yield call(machine.oven.turnOn, store);
-  yield put({ type: "MOTOR" });
-  yield call(machine.motor.process, store.getState())
-  yield put({ type: "EXTRUDER" });
-  yield call(machine.extruder.process, store.getState());
-  yield put({ type: "STAMPER" });
-  yield call(machine.stamper.process, store.getState());
-  yield put({ type: "OVEN" });
-  yield call(machine.oven.process, store);
-  yield put({ type: "PRODUCE_COOKIE" });
-  yield call(machine.produceBiscuit, store);
-  yield* conveyorStart(machine);
+const machine = biscuitMachineFactory();
+
+function* watchWarmUp() {
+  while (yield take(actions.WARM_UP)) {
+    // starts the task in the background
+    const warmUpTask = yield fork(warmUp, machine)
+    // wait for the user stop or pause action
+    yield take([actions.STOP, actions.PAUSE])
+    yield call(machine.oven.turnOff, store)
+    // cancel the background task
+    yield cancel(warmUpTask)
+  }
 }
 
-export const constructBiscuitMachine = () => {
-  return new BiscuitMachine.Builder("Machine for the sweetest biscuits")
-    .withMotor(new Devices.Motor())
-    .withExtruder(new Devices.Extruder())
-    .withStamper(new Devices.Stamper())
-    .withOven(new Devices.Oven())
-    .build();
-}
-
-const machine = constructBiscuitMachine();
-
-export function* watchConveyorStart() {
-  while (yield take('START')) {
+function* watchConveyorStart() {
+  while (yield take(actions.START)) {
     // starts the task in the background
     const conveyorStartTask = yield fork(conveyorStart, machine)
     // wait for the user stop or pause action
-    yield take(['STOP', 'PAUSE'])
+    yield take([actions.STOP, actions.PAUSE])
     // cancel the background task
     yield cancel(conveyorStartTask)
   }
 }
 
+function* warmUp(machine) {
+  yield call(machine.oven.warmUp, store);
+}
+
+function* conveyorStart(machine) {
+  yield put({ type: actions.TRIGGER_MOTOR });
+  yield call(machine.motor.process, store)
+  yield put({ type: actions.TRIGGER_EXTRUDER });
+  yield call(machine.extruder.process, store);
+  yield put({ type: actions.TRIGGER_STAMPER });
+  yield call(machine.stamper.process, store);
+  yield put({ type: actions.TRIGGER_OVEN });
+  yield call(machine.oven.process, store);
+  yield put({ type: actions.PRODUCE_COOKIE });
+  yield call(machine.produceBiscuit, store);
+  yield* conveyorStart(machine);
+}
+
+export default function* rootSaga() {
+  yield all([
+    fork(watchWarmUp),
+    fork(watchConveyorStart)
+  ])
+}
 

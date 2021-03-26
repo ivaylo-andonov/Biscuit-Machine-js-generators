@@ -5,15 +5,13 @@ import { shouldResume } from '../BiscuitMachine'
 import DeviceView from '../../views/DeviceView'
 
 export class Motor extends Component {
-    constructor(props) {
-        super(props);
-    }
 
-    *process(machineState) {
+    *process(store) {
+        const machineState = store.getState();
         if (shouldResume(machineState)) {
             yield put({ type: "RESUME" })
         } else if (!machineState.pausedComponent) {
-            yield new Promise((resolve, reject) => {
+            yield new Promise((resolve) => {
                 setTimeout(() => {
                     console.log(`${machineState.processingComponent} processed the biscuit successfully`);
                     resolve("pulse");

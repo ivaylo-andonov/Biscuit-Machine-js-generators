@@ -13,10 +13,10 @@ class App extends Component {
             <React.Fragment>
                 <BiscuitMachineView>
                     <SwitchView onStart={this.props.onStart} onPause={this.props.onPause} onStop={this.props.onStop} />
-                    <Motor deviceName={'MOTOR'}  {...this.props} />
-                    <Extruder deviceName={'EXTRUDER'} {...this.props} />
-                    <Stamper deviceName={'STAMPER'} {...this.props} />
-                    <Oven deviceName={'OVEN'} temperature={this.props.temperature} processingComponent={this.props.processingComponent} />
+                    <Motor deviceName={'Motor'}  {...this.props} />
+                    <Extruder deviceName={'Extruder'} {...this.props} />
+                    <Stamper deviceName={'Stamper'} {...this.props} />
+                    <Oven deviceName={'Oven'} {...this.props} />
                     <BiscuitsView biscuitsCount={this.props.biscuitsCount} />
                 </BiscuitMachineView>
             </React.Fragment>
@@ -35,7 +35,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onStart: () => dispatch({ type: "START", mode: "START" }),
+        onStart: () => dispatch({ type: "WARM_UP", mode: "WARM_UP" }),
         onStop: () => dispatch({ type: "STOP", mode: "STOP" }),
         onPause: () => dispatch({ type: "PAUSE", mode: "PAUSE" })
     };

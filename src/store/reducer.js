@@ -1,3 +1,5 @@
+import * as actions from '../actions'
+
 const initialState = {
     processingComponent: "",
     pausedComponent: "",
@@ -5,52 +7,56 @@ const initialState = {
     temperature: 0
 };
 
-const reducer = (state = initialState, action) => {
+const rootReducer = (state = initialState, action) => {
     const newState = { ...state };
 
     switch (action.type) {
-        case "START":
+        case actions.WARM_UP:
+            break;
+        case actions.START:
             break;
 
-        case "STOP":
+        case actions.STOP:
             newState.biscuitsCount = 0
             newState.pausedComponent = null
             newState.processingComponent = ""
+            newState.temperature = 0;
             break;
 
-        case "PAUSE":
+        case actions.PAUSE:
             newState.pausedComponent = state.processingComponent
             break;
 
-        case "RESUME":
+        case actions.RESUME:
             newState.pausedComponent = ""
             break;
 
-        case "MOTOR":
-            newState.processingComponent = "MOTOR";
+        case actions.TRIGGER_MOTOR:
+            newState.processingComponent = "Motor";
             break;
 
-        case "EXTRUDER":
-            newState.processingComponent = "EXTRUDER";
+        case actions.TRIGGER_EXTRUDER:
+            newState.processingComponent = "Extruder";
             break;
 
-        case "STAMPER":
-            newState.processingComponent = "STAMPER";
+        case actions.TRIGGER_STAMPER:
+            newState.processingComponent = "Stamper";
             break;
 
-        case "OVEN":
-            newState.processingComponent = "OVEN";
+        case actions.TRIGGER_OVEN:
+            newState.processingComponent = "Oven";
             break;
 
-        case "INCREASE_TEMP":
+        case actions.UPDATE_TEMP:
             newState.temperature += action.temp;
             break;
 
-        case "PRODUCE_COOKIE":
+        case actions.PRODUCE_COOKIE:
             newState.biscuitsCount += 1;
             break;
     }
+
     return newState;
 };
 
-export default reducer;
+export default rootReducer;

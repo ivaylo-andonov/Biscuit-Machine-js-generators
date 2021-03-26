@@ -5,11 +5,11 @@ import reducer from "./store/reducer";
 import { Provider } from "react-redux";
 import { createStore, applyMiddleware } from "redux";
 import createSagaMiddleware from "redux-saga";
-import { watchConveyorStart } from "./sagas/saga";
+import rootSaga from "./sagas/saga";
 
 const sagaMiddleware = createSagaMiddleware();
 export const store = createStore(reducer, applyMiddleware(sagaMiddleware));
-sagaMiddleware.run(watchConveyorStart);
+sagaMiddleware.run(rootSaga);
 
 ReactDOM.render(
   <Provider store={store}>
