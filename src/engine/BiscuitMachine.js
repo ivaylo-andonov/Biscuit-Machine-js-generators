@@ -24,10 +24,9 @@ export class BiscuitMachine {
         else {
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
-                    var biscuit = new Biscuit(true);
-                    console.log('New biscuit is produced!', biscuit);
-                    store.dispatch(produceCookie(1))
-                    resolve(biscuit)
+                    const cookie = new Biscuit(true);
+                    console.log('New cookie is produced!', cookie);
+                    resolve(cookie)
                 }, 0);
             });
         }
@@ -66,4 +65,5 @@ export class BiscuitMachine {
     }
 }
 
-export const produceCookie = () => ({ type: "PRODUCE_COOKIE" })
+export const shouldResume = (machineState) => (machineState.pausedComponent && machineState.pausedComponent === machineState.processingComponent)
+

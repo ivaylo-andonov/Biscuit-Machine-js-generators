@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
 import { put } from "redux-saga/effects";
+import { shouldResume } from '../BiscuitMachine'
+
 import DeviceView from '../../views/DeviceView'
 
 export class Motor extends Component {
     constructor(props) {
         super(props);
-        this.deviceName = this.constructor.name;
     }
 
     *process(machineState) {
-        if (machineState.pausedComponent && machineState.pausedComponent === machineState.processingComponent) {
+        if (shouldResume(machineState)) {
             yield put({ type: "RESUME" })
         } else if (!machineState.pausedComponent) {
             yield new Promise((resolve, reject) => {
@@ -23,7 +24,7 @@ export class Motor extends Component {
 
     render() {
         return (
-            <DeviceView deviceName={'MOTOR'} {...this.props} />
+            <DeviceView {...this.props} />
         );
     }
 }

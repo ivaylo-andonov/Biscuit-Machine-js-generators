@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { put } from '@redux-saga/core/effects';
 import DeviceView from '../../views/DeviceView'
+import { shouldResume } from '../BiscuitMachine'
 export class Stamper extends Component {
     constructor(props) {
         super(props);
-        this.deviceName = this.constructor.name;
     }
 
     *process(machineState) {
-        if (machineState.pausedComponent && machineState.pausedComponent === machineState.processingComponent) {
+        if (shouldResume(machineState)) {
             yield put({ type: "RESUME" })
         } else if (!machineState.pausedComponent) {
             yield new Promise((resolve, reject) => {
@@ -22,7 +22,7 @@ export class Stamper extends Component {
 
     render() {
         return (
-            <DeviceView deviceName={'STAMPER'} {...this.props} />
+            <DeviceView {...this.props} />
         );
     }
 }

@@ -1,7 +1,7 @@
 # Biscuit Machine
 ---
 
-Biscuit Machine System Client app developed with [React](https://facebook.github.io/react/), [Babel](http://babeljs.io/), [Nodejs](https://nodejs.org/en/) , MobX, and [Webpack](http://webpack.github.io/).
+Biscuit Machine System Client app developed with [React](https://facebook.github.io/react/), [Babel](http://babeljs.io/), [Nodejs](https://nodejs.org/en/) , [Redux-Saga](https://redux-saga.js.org/), and [Webpack](http://webpack.github.io/).
 
 ![Description](https://image.ibb.co/dicy28/bisquit_machine.png)
 

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import DeviceView from '../../views/DeviceView'
-import { store } from '../../index'
+import { store } from '../..'
+import { shouldResume } from '../BiscuitMachine'
+import { put } from "redux-saga/effects";
 
 export const minBakingTemperature = 220;
 export const maxBakingTemperature = 240;
@@ -16,7 +18,7 @@ export class Oven extends Component {
         this.warmUpInterval = null;
         this.heatingInterval = null;
 
-        this.turnOn = this.turnOn.bind(this);
+        this.warmUp = this.warmUp.bind(this);
     }
 
     turnOff() {
@@ -26,13 +28,13 @@ export class Oven extends Component {
         clearInterval(this.heatingInterval);
     }
 
-    turnOn(store) {
+    warmUp(store) {
         var self = this;
         const machineState = store.getState()
         console.log('Oven is turned on');
 
         if (machineState.temperature >= minBakingTemperature) {
-            return;
+            return
         }
 
         self.warmUpInterval = setInterval(function () {
@@ -64,7 +66,7 @@ export class Oven extends Component {
 
     *process(store) {
         const machineState = store.getState()
-        if (machineState.pausedComponent && machineState.pausedComponent === machineState.processingComponent) {
+        if (shouldResume(machineState)) {
             yield put({ type: "RESUME" })
         } else if (!machineState.pausedComponent) {
             yield new Promise((resolve, reject) => {
@@ -84,7 +86,7 @@ export class Oven extends Component {
 
     render() {
         return (
-            <DeviceView deviceName={'OVEN'} {...this.props} />
+            <DeviceView {...this.props} />
         );
     }
 }
