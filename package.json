@@ -23,7 +23,7 @@
     "prop-types": "^15.6.0",
     "react": "^16.4.1",
     "react-bootstrap": "^0.32.1",
-    "react-dom": "^16.4.1",
+    "react-dom": "^16.4.2",
     "react-redux": "^7.2.3",
     "redux": "^4.0.5",
     "redux-saga": "^1.1.3",
