@@ -1,23 +1,29 @@
-import Device from './contract/Device';
-import { pulseConst } from './Motor';
+import React, { Component } from 'react';
+import { put } from "redux-saga/effects";
+import DeviceView from '../../views/DeviceView'
 
-export class Extruder extends Device {
-    constructor() {
-        super();
+export class Extruder extends Component {
+    constructor(props) {
+        super(props);
         this.deviceName = this.constructor.name;
     }
 
-    process(pulse, isMachineOn, isPaused, delay) {
-        console.log('Extruder is called');
-        return new Promise((resolve, reject) => {
-            if (pulse === pulseConst && isMachineOn) {
-                super.processIt('Extruder', resolve, null, delay);
-            } else if (isPaused) {
-                reject('Machine is paused');
-            }
-            else if (!isMachineOn) {
-                reject('Machine is off');
-            }
-        });
+    *process(machineState) {
+        if (machineState.pausedComponent && machineState.pausedComponent === machineState.processingComponent) {
+            yield put({ type: "RESUME" })
+        } else if (!machineState.pausedComponent) {
+            yield new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    console.log(`${machineState.processingComponent} processed the biscuit successfully`);
+                    resolve("pulse");
+                }, 1000);
+            });
+        }
+    }
+
+    render() {
+        return (
+            <DeviceView deviceName={'EXTRUDER'} {...this.props} />
+        );
     }
 }

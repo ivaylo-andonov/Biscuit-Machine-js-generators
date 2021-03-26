@@ -1,5 +1,6 @@
-import Device from './contract/Device';
-import { observable } from 'mobx';
+import React, { Component } from 'react';
+import DeviceView from '../../views/DeviceView'
+import { store } from '../../index'
 
 export const minBakingTemperature = 220;
 export const maxBakingTemperature = 240;
@@ -7,15 +8,13 @@ export const warmingTempInc = 40;
 export const keepHeatingInc = 10;
 export const sec = 1000;
 
-export class Oven extends Device {
-    constructor() {
-        super();
+export class Oven extends Component {
+    constructor(props) {
+        super(props);
 
-        this.temperature = 0;
-        this.temp = observable({ val: 0 });
+        this.deviceName = this.constructor.name;
         this.warmUpInterval = null;
         this.heatingInterval = null;
-        this.deviceName = this.constructor.name;
 
         this.turnOn = this.turnOn.bind(this);
     }
@@ -27,26 +26,24 @@ export class Oven extends Device {
         clearInterval(this.heatingInterval);
     }
 
-    turnOn(callback) {
+    turnOn(store) {
         var self = this;
+        const machineState = store.getState()
         console.log('Oven is turned on');
 
-        if (self.temperature >= minBakingTemperature) {
-            callback(true);
+        if (machineState.temperature >= minBakingTemperature) {
             return;
         }
 
         self.warmUpInterval = setInterval(function () {
-            if (self.temperature >= minBakingTemperature) {
+            if (store.getState().temperature >= minBakingTemperature) {
                 console.log('Oven is ready');
                 clearInterval(self.warmUpInterval);
-                callback(true);
                 self.keepHeating()
             }
             else {
-                self.temperature += warmingTempInc;
-                self.temp.val = self.temperature;
-                console.log('Oven`s temperature is:' + self.temperature);
+                store.dispatch(increaseTemp(warmingTempInc))
+                console.log('Oven`s temperature is:' + store.getState().temperature);
             }
         }, sec);
     }
@@ -55,33 +52,41 @@ export class Oven extends Device {
         var self = this;
         var inc = keepHeatingInc;
         self.heatingInterval = setInterval(function () {
-            if (self.temperature === minBakingTemperature ||
-                self.temperature === maxBakingTemperature) {
+            console.log(store.getState())
+            if (store.getState().temperature === minBakingTemperature ||
+                store.getState().temperature === maxBakingTemperature) {
                 inc *= -1;
             }
 
-            self.temperature += inc;
-            self.temp.val = self.temperature;
+            store.dispatch(increaseTemp(inc))
         }, sec);
     }
 
-    process(isMachineOn, isPaused, delay) {
-        console.log('Oven is called');
+    *process(store) {
+        const machineState = store.getState()
+        if (machineState.pausedComponent && machineState.pausedComponent === machineState.processingComponent) {
+            yield put({ type: "RESUME" })
+        } else if (!machineState.pausedComponent) {
+            yield new Promise((resolve, reject) => {
+                if (machineState.temperature > maxBakingTemperature) {
+                    setTimeout(function () {
+                        console.log('Oven is overheating!');
+                    }, 1000);
+                } else {
+                    setTimeout(() => {
+                        console.log(`${machineState.processingComponent} processed the biscuit successfully`);
+                        resolve(machineState.temperature);
+                    }, 1000);
+                }
+            });
+        }
+    }
 
-        return new Promise((resolve, reject) => {
-            if (isMachineOn && this.temperature > maxBakingTemperature) {
-                setTimeout(function () {
-                    console.log('Oven is overheating!');
-                    reject('Oven is overheated');
-                }, delay);
-            } else if (isPaused) {
-                reject('Machine is paused');
-            }
-            else if (!isMachineOn) {
-                reject('Machine is off');
-            } else {
-                super.processIt('Oven', resolve, this.temperature, delay);
-            }
-        });
+    render() {
+        return (
+            <DeviceView deviceName={'OVEN'} {...this.props} />
+        );
     }
 }
+
+const increaseTemp = (temp) => ({ type: "INCREASE_TEMP", temp })

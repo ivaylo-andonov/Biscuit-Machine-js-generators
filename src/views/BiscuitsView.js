@@ -1,9 +1,8 @@
-import { observer } from "mobx-react";
 import React from 'react';
 
-export const BiscuitsView = observer((props) => {
+export const BiscuitsView = (props) => {
     return (<div>
         <h2>Biscuits Count:</h2>
-        <span>{props.biscuits.val}</span>
+        <span>{props.biscuitsCount}</span>
     </div>);
-});
+};
