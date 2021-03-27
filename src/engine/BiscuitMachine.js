@@ -1,9 +1,7 @@
 import Biscuit from '../products/Biscuit';
 import * as Devices from './components';
 import { minBakingTemperature, maxBakingTemperature } from './components/Oven';
-
-export const sec = 1000;
-export class BiscuitMachine {
+class BiscuitMachine {
   constructor(build) {
     this.machineName = build.machineName;
     this.switch = build.switch;
@@ -18,11 +16,6 @@ export class BiscuitMachine {
     class Builder {
       constructor(name) {
         this.machineName = name;
-      }
-
-      withSwitch(switchInstance) {
-        this.switch = switchInstance;
-        return this;
       }
 
       withMotor(motorInstance) {

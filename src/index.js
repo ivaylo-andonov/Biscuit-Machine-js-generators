@@ -1,11 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./App";
-import reducer from "./store/reducer";
 import { Provider } from "react-redux";
 import { createStore, applyMiddleware } from "redux";
 import createSagaMiddleware from "redux-saga";
+import reducer from "./store/reducer";
 import rootSaga from "./sagas/saga";
+import App from "./App";
 
 const sagaMiddleware = createSagaMiddleware();
 export const store = createStore(reducer, applyMiddleware(sagaMiddleware));

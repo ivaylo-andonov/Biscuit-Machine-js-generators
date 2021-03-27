@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export const SwitchView = (props) => {
+export const SwitchView = ({ onStart, onPause, onStop }) => {
   return (
     <div className="biscuit-switch">
-      <button onClick={props.onStart}>Start</button>
-      <button onClick={props.onPause}>Pause</button>
-      <button onClick={props.onStop}>Stop</button>
+      <button onClick={onStart}>Start</button>
+      <button onClick={onPause}>Pause</button>
+      <button onClick={onStop}>Stop</button>
     </div>
   );
 };

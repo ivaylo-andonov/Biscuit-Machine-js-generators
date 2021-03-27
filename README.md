@@ -1,4 +1,4 @@
-# Biscuit Machine
+# Biscuit Machine (solution using generators)
 ---
 
 Biscuit Machine System Client app developed with [React](https://facebook.github.io/react/), [Babel](http://babeljs.io/), [Nodejs](https://nodejs.org/en/) , [Redux-Saga](https://redux-saga.js.org/), and [Webpack](http://webpack.github.io/).

@@ -13,6 +13,7 @@ function* watchWarmUp() {
     const warmUpTask = yield fork(warmUp, machine);
     // wait for the user stop or pause action
     yield take([actions.STOP, actions.PAUSE]);
+    // turn off oven's heating
     yield call(machine.oven.turnOff, store);
     // cancel the background task
     yield cancel(warmUpTask);

@@ -1,28 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export const DeviceView = (props) => {
+export const DeviceView = ({deviceName, processingComponent}) => {
     return (
         <div>
             <hr></hr>
-            <h2>{props.deviceName}</h2>
-            <span>{props.processingComponent === props.deviceName && <Image />}</span>
+            <h2>{deviceName}</h2>
+            <span>{processingComponent === deviceName && <CookieImage />}</span>
             <hr></hr>
         </div>
     );
 };
 
-export const TemperatureView = (props) => {
+export const TemperatureView = ({temperature}) => {
     return (
         <div>
             <b>Temperature:</b>
-            <span>{props.temperature || 0}</span>
+            <span>{temperature || 0}</span>
             <hr></hr>
         </div>
     );
 };
 
-const Image = () => (
+const CookieImage = () => (
     <img
         style={{ width: '20px', height: '20px' }}
         src={'https://pngimg.com/uploads/cookie/cookie_PNG13648.png'}

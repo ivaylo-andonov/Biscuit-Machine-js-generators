@@ -10,7 +10,6 @@ const initialState = {
 const rootReducer = (state = initialState, action) => {
   switch (action.type) {
     case actions.WARM_UP:
-      return state;
     case actions.START:
       return state;
 

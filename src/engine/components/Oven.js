@@ -1,8 +1,7 @@
-import { Component } from 'react';
 import { put } from 'redux-saga/effects';
 import { shouldResume } from '../utils';
-import { store } from '../..';
 import { updateTemp, startConveyor } from '../../actions';
+import { store } from '../..';
 
 export const minBakingTemperature = 220;
 export const maxBakingTemperature = 240;
@@ -10,10 +9,8 @@ export const warmingTempInc = 40;
 export const keepHeatingInc = 10;
 export const sec = 1000;
 
-export class Oven extends Component {
-  constructor(props) {
-    super(props);
-
+export class Oven {
+  constructor() {
     this.warmUpInterval = null;
     this.heatingInterval = null;
     this.warmUp = this.warmUp.bind(this);
@@ -27,12 +24,11 @@ export class Oven extends Component {
     clearInterval(this.heatingInterval);
   }
 
-  warmUp(store) {
+  warmUp() {
     const self = this;
-    const machineState = store.getState();
-    console.log('Oven warm up is turned on');
+    console.log('Oven warming up is turned on');
 
-    if (machineState.temperature >= minBakingTemperature) {
+    if (store.getState().temperature >= minBakingTemperature) {
       store.dispatch(startConveyor());
     }
 
@@ -40,11 +36,11 @@ export class Oven extends Component {
       if (store.getState().temperature >= minBakingTemperature) {
         console.log('Oven is ready');
         clearInterval(self.warmUpInterval);
-        self.keepHeating();
         store.dispatch(startConveyor());
+        self.keepHeating(store);
       } else {
         store.dispatch(updateTemp(warmingTempInc));
-        console.log(`Oven\`s temperature is:${store.getState().temperature}`);
+        console.log(`Oven\`s temperature is: ${store.getState().temperature}`);
       }
     }, sec);
   }
@@ -53,7 +49,6 @@ export class Oven extends Component {
     const self = this;
     let inc = keepHeatingInc;
     self.heatingInterval = setInterval(() => {
-      console.log(store.getState());
       if (store.getState().temperature === minBakingTemperature
                 || store.getState().temperature === maxBakingTemperature) {
         inc *= -1;

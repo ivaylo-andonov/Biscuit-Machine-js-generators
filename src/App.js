@@ -18,7 +18,7 @@ class App extends Component {
                     <DeviceView deviceName={'Extruder'} {...this.props} />
                     <DeviceView deviceName={'Stamper'} {...this.props} />
                     <DeviceView deviceName={'Oven'} {...this.props} />
-                    <TemperatureView  {...this.props} />
+                    <TemperatureView temperature={this.props.temperature} />
                     <BiscuitsView biscuitsCount={this.props.biscuitsCount} />
                 </BiscuitMachineView>
             </React.Fragment>
@@ -44,14 +44,15 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-App.propTypes = {
-    onStart: PropTypes.func,
-    onStop: PropTypes.func,
-    onPause: PropTypes.func,
-    biscuitsCount: PropTypes.number
-};
-
 export default connect(
     mapStateToProps,
     mapDispatchToProps
 )(App);
+
+App.propTypes = {
+    onStart: PropTypes.func,
+    onStop: PropTypes.func,
+    onPause: PropTypes.func,
+    temperature: PropTypes.number,
+    biscuitsCount: PropTypes.number
+};
