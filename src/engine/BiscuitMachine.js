@@ -1,6 +1,10 @@
 import Biscuit from '../products/Biscuit';
-import * as Devices from './components';
-import { minBakingTemperature, maxBakingTemperature } from './components/Oven';
+import { motorFactory, extruderFactory, stamperFactory, ovenFactory } from './components';
+import { minBakingTemp, maxBakingTemp } from './components/Oven';
+import { put, select } from 'redux-saga/effects';
+import * as actions from '../actions';
+import { currentTemperature } from '../engine/utils'
+
 class BiscuitMachine {
   constructor(build) {
     this.machineName = build.machineName;
@@ -45,11 +49,12 @@ class BiscuitMachine {
     return Builder;
   }
 
-  produceBiscuit(store) {
-    const temperature = store.getState();
-    if (temperature < minBakingTemperature || temperature > maxBakingTemperature) {
-      throw (`Biscuit is not cooked well.Temperature is${temperature}`);
+  * produceBiscuit() {
+    const currentTemp = yield select(currentTemperature);
+    if (currentTemp < minBakingTemp || currentTemp > maxBakingTemp) {
+      throw (`Biscuit is not cooked well.Current temperature is ${currentTemp}`);
     } else {
+      yield put({ type: actions.PRODUCE_COOKIE });
       return new Promise((resolve) => {
         setTimeout(() => {
           const cookie = new Biscuit(true);
@@ -61,9 +66,9 @@ class BiscuitMachine {
   }
 }
 
-export const biscuitMachineFactory = () => new BiscuitMachine.Builder('The sweetest cookies')
-  .withMotor(new Devices.Motor())
-  .withExtruder(new Devices.Extruder())
-  .withStamper(new Devices.Stamper())
-  .withOven(new Devices.Oven())
+export const biscuitMachineFactory = (machineName) => new BiscuitMachine.Builder(machineName)
+  .withMotor(motorFactory())
+  .withExtruder(extruderFactory())
+  .withStamper(stamperFactory())
+  .withOven(ovenFactory())
   .build();

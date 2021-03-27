@@ -27,10 +27,10 @@ class App extends Component {
 }
 
 const mapStateToProps = state => {
-    const { pausedComponent, processingComponent, biscuitsCount, temperature } = state;
+    const { pausedComponent, currentComponent, biscuitsCount, temperature } = state;
     return {
         pausedComponent,
-        processingComponent,
+        currentComponent,
         biscuitsCount,
         temperature
     };

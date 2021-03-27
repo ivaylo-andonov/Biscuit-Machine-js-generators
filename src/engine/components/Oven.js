@@ -1,22 +1,19 @@
-import { put } from 'redux-saga/effects';
-import { shouldResume } from '../utils';
-import { updateTemp, startConveyor } from '../../actions';
+import { put, select } from 'redux-saga/effects';
+import { shouldResume, shouldChangeHeatingDir } from '../utils';
+import { oneSec, keepHeatingInc, warmingTempInc, maxBakingTemp } from '../../config';
+import * as actions from '../../actions'
 import { store } from '../..';
 
-export const minBakingTemperature = 220;
-export const maxBakingTemperature = 240;
-export const warmingTempInc = 40;
-export const keepHeatingInc = 10;
-export const sec = 1000;
-
-export class Oven {
+class Oven {
   constructor() {
     this.warmUpInterval = null;
     this.heatingInterval = null;
+    this.inc = keepHeatingInc;
+
     this.warmUp = this.warmUp.bind(this);
     this.turnOff = this.turnOff.bind(this);
     this.keepHeating = this.keepHeating.bind(this);
-    this.process = this.process.bind(this);
+    this.trigger = this.trigger.bind(this);
   }
 
   turnOff() {
@@ -24,57 +21,61 @@ export class Oven {
     clearInterval(this.heatingInterval);
   }
 
-  warmUp() {
+  warmUp(minBakingTemp, maxBakingTemp) {
     const self = this;
     console.log('Oven warming up is turned on');
 
-    if (store.getState().temperature >= minBakingTemperature) {
-      store.dispatch(startConveyor());
-    }
-
     self.warmUpInterval = setInterval(() => {
-      if (store.getState().temperature >= minBakingTemperature) {
+      const currentTemp = store.getState().temperature;   
+
+      if (currentTemp >= minBakingTemp) {
         console.log('Oven is ready');
         clearInterval(self.warmUpInterval);
-        store.dispatch(startConveyor());
-        self.keepHeating(store);
+
+        store.dispatch(actions.startConveyor());
+        self.keepHeating(minBakingTemp, maxBakingTemp);
       } else {
-        store.dispatch(updateTemp(warmingTempInc));
-        console.log(`Oven\`s temperature is: ${store.getState().temperature}`);
+        store.dispatch(actions.updateTemp(warmingTempInc));
       }
-    }, sec);
+    }, oneSec / 2);
   }
 
-  keepHeating() {
+  keepHeating(minBakingTemp, maxBakingTemp) {
     const self = this;
-    let inc = keepHeatingInc;
+
     self.heatingInterval = setInterval(() => {
-      if (store.getState().temperature === minBakingTemperature
-                || store.getState().temperature === maxBakingTemperature) {
-        inc *= -1;
+      const currentTemp = store.getState().temperature;
+
+      if (shouldChangeHeatingDir(currentTemp, minBakingTemp, maxBakingTemp, this.inc)) {
+        this.inc *= -1;
       }
 
-      store.dispatch(updateTemp(inc));
-    }, sec);
+      store.dispatch(actions.updateTemp(this.inc));
+    }, oneSec);
   }
 
-  * process(store) {
-    const machineState = store.getState();
-    if (shouldResume(machineState)) {
-      yield put({ type: 'RESUME' });
-    } else if (!machineState.pausedComponent) {
+  * trigger() {
+    yield put({ type: actions.TRIGGER_OVEN });
+
+    const { currentComponent, pausedComponent, temperature } = yield select();
+
+    if (shouldResume({ pausedComponent, currentComponent })) {
+      yield put({ type: actions.RESUME });
+    } else if (!pausedComponent) {
       yield new Promise((resolve) => {
-        if (machineState.temperature > maxBakingTemperature) {
+        if (temperature > maxBakingTemp) {
           setTimeout(() => {
             console.log('Oven is overheating!');
-          }, 1000);
+          }, oneSec);
         } else {
           setTimeout(() => {
-            console.log(`${machineState.processingComponent} processed the biscuit successfully`);
-            resolve(machineState.temperature);
-          }, 1000);
+            console.log(`${currentComponent} processed the biscuit successfully`);
+            resolve(temperature);
+          }, oneSec);
         }
       });
     }
   }
 }
+
+export const ovenFactory = () => new Oven();

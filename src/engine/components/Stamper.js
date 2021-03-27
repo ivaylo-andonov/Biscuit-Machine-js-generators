@@ -1,13 +1,17 @@
-import { put } from '@redux-saga/core/effects';
-import { shouldResume, processDelay } from '../utils';
+import { put, select } from 'redux-saga/effects';
+import * as actions from '../../actions'
+import { shouldResume, processDelay, componentOnPause, componentInProcess } from '../utils';
 
-export class Stamper {
-  * process(store) {
-    const machineState = store.getState();
-    if (shouldResume(machineState)) {
-      yield put({ type: 'RESUME' });
-    } else if (!machineState.pausedComponent) {
-      yield new Promise((resolve) => processDelay(resolve, machineState.processingComponent));
+export const stamperFactory = () => ({
+  * trigger() {
+    yield put({ type: actions.TRIGGER_STAMPER });
+    const pausedComponent = yield select(componentOnPause);
+    const currentComponent = yield select(componentInProcess);
+
+    if (shouldResume({ pausedComponent, currentComponent })) {
+      yield put({ type: actions.RESUME });
+    } else if (!pausedComponent) {
+      yield new Promise((resolve) => processDelay(resolve, currentComponent));
     }
   }
-}
+})
