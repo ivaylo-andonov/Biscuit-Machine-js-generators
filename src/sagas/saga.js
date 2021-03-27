@@ -1,6 +1,8 @@
-import { put, take, fork, call, cancel, all } from "redux-saga/effects";
+import {
+  put, take, fork, call, cancel, all,
+} from 'redux-saga/effects';
 import { biscuitMachineFactory } from '../engine/BiscuitMachine';
-import * as actions from '../actions'
+import * as actions from '../actions';
 import { store } from '..';
 
 const machine = biscuitMachineFactory();
@@ -8,23 +10,23 @@ const machine = biscuitMachineFactory();
 function* watchWarmUp() {
   while (yield take(actions.WARM_UP)) {
     // starts the task in the background
-    const warmUpTask = yield fork(warmUp, machine)
+    const warmUpTask = yield fork(warmUp, machine);
     // wait for the user stop or pause action
-    yield take([actions.STOP, actions.PAUSE])
-    yield call(machine.oven.turnOff, store)
+    yield take([actions.STOP, actions.PAUSE]);
+    yield call(machine.oven.turnOff, store);
     // cancel the background task
-    yield cancel(warmUpTask)
+    yield cancel(warmUpTask);
   }
 }
 
 function* watchConveyorStart() {
   while (yield take(actions.START)) {
     // starts the task in the background
-    const conveyorStartTask = yield fork(conveyorStart, machine)
+    const conveyorStartTask = yield fork(conveyorStart, machine);
     // wait for the user stop or pause action
-    yield take([actions.STOP, actions.PAUSE])
+    yield take([actions.STOP, actions.PAUSE]);
     // cancel the background task
-    yield cancel(conveyorStartTask)
+    yield cancel(conveyorStartTask);
   }
 }
 
@@ -34,7 +36,7 @@ function* warmUp(machine) {
 
 function* conveyorStart(machine) {
   yield put({ type: actions.TRIGGER_MOTOR });
-  yield call(machine.motor.process, store)
+  yield call(machine.motor.process, store);
   yield put({ type: actions.TRIGGER_EXTRUDER });
   yield call(machine.extruder.process, store);
   yield put({ type: actions.TRIGGER_STAMPER });
@@ -49,7 +51,6 @@ function* conveyorStart(machine) {
 export default function* rootSaga() {
   yield all([
     fork(watchWarmUp),
-    fork(watchConveyorStart)
-  ])
+    fork(watchConveyorStart),
+  ]);
 }
-

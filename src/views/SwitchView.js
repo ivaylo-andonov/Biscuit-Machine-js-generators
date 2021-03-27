@@ -1,17 +1,18 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 
-export class SwitchView extends Component {
-  constructor(props) {
-    super(props);
-  }
+export const SwitchView = (props) => {
+  return (
+    <div className="biscuit-switch">
+      <button onClick={props.onStart}>Start</button>
+      <button onClick={props.onPause}>Pause</button>
+      <button onClick={props.onStop}>Stop</button>
+    </div>
+  );
+};
 
-  render() {
-    return (
-      <div className="biscuit-switch">
-        <button onClick={this.props.onStart}>Start</button>
-        <button onClick={this.props.onPause}>Pause</button>
-        <button onClick={this.props.onStop}>Stop</button>
-      </div>
-    );
-  }
-}
+SwitchView.propTypes = {
+  onStart: PropTypes.func,
+  onStop: PropTypes.func,
+  onPause: PropTypes.func
+};

@@ -1,62 +1,57 @@
-import * as actions from '../actions'
+import * as actions from '../actions';
 
 const initialState = {
-    processingComponent: "",
-    pausedComponent: "",
-    biscuitsCount: 0,
-    temperature: 0
+  processingComponent: '',
+  pausedComponent: '',
+  biscuitsCount: 0,
+  temperature: 0,
 };
 
 const rootReducer = (state = initialState, action) => {
-    const newState = { ...state };
+  switch (action.type) {
+    case actions.WARM_UP:
+      return state;
+    case actions.START:
+      return state;
 
-    switch (action.type) {
-        case actions.WARM_UP:
-            break;
-        case actions.START:
-            break;
+    case actions.STOP:
+      return {
+        ...state,
+        biscuitsCount: 0,
+        pausedComponent: null,
+        processingComponent: null,
+        temperature: 0,
+      };
 
-        case actions.STOP:
-            newState.biscuitsCount = 0
-            newState.pausedComponent = null
-            newState.processingComponent = ""
-            newState.temperature = 0;
-            break;
+    case actions.PAUSE:
+      return {
+        ...state,
+        pausedComponent: state.processingComponent
+      };
 
-        case actions.PAUSE:
-            newState.pausedComponent = state.processingComponent
-            break;
+    case actions.RESUME:
+      return { ...state, pausedComponent: null };
 
-        case actions.RESUME:
-            newState.pausedComponent = ""
-            break;
+    case actions.TRIGGER_MOTOR:
+      return { ...state, processingComponent: 'Motor' };
 
-        case actions.TRIGGER_MOTOR:
-            newState.processingComponent = "Motor";
-            break;
+    case actions.TRIGGER_EXTRUDER:
+      return { ...state, processingComponent: 'Extruder' };
 
-        case actions.TRIGGER_EXTRUDER:
-            newState.processingComponent = "Extruder";
-            break;
+    case actions.TRIGGER_STAMPER:
+      return { ...state, processingComponent: 'Stamper' };
 
-        case actions.TRIGGER_STAMPER:
-            newState.processingComponent = "Stamper";
-            break;
+    case actions.TRIGGER_OVEN:
+      return { ...state, processingComponent: 'Oven' };
 
-        case actions.TRIGGER_OVEN:
-            newState.processingComponent = "Oven";
-            break;
+    case actions.UPDATE_TEMP:
+      return { ...state, temperature: state.temperature + action.temp };
 
-        case actions.UPDATE_TEMP:
-            newState.temperature += action.temp;
-            break;
+    case actions.PRODUCE_COOKIE:
+      return { ...state, biscuitsCount: ++state.biscuitsCount };
 
-        case actions.PRODUCE_COOKIE:
-            newState.biscuitsCount += 1;
-            break;
-    }
-
-    return newState;
+    default: return state;
+  }
 };
 
 export default rootReducer;

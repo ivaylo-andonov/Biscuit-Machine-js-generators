@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 export class BiscuitMachineView extends Component {
     constructor(props) {
@@ -14,3 +15,7 @@ export class BiscuitMachineView extends Component {
         );
     }
 }
+
+BiscuitMachineView.propTypes = {
+    children: PropTypes.any
+};

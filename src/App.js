@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from "react-redux";
-import { Motor, Extruder, Stamper, Oven } from './engine/components';
+import { DeviceView } from './views'
 import { BiscuitMachineView, SwitchView, BiscuitsView, TemperatureView } from './views';
 
 class App extends Component {
@@ -13,10 +14,10 @@ class App extends Component {
             <React.Fragment>
                 <BiscuitMachineView>
                     <SwitchView onStart={this.props.onStart} onPause={this.props.onPause} onStop={this.props.onStop} />
-                    <Motor deviceName={'Motor'}  {...this.props} />
-                    <Extruder deviceName={'Extruder'} {...this.props} />
-                    <Stamper deviceName={'Stamper'} {...this.props} />
-                    <Oven deviceName={'Oven'} {...this.props} />
+                    <DeviceView deviceName={'Motor'}  {...this.props} />
+                    <DeviceView deviceName={'Extruder'} {...this.props} />
+                    <DeviceView deviceName={'Stamper'} {...this.props} />
+                    <DeviceView deviceName={'Oven'} {...this.props} />
                     <TemperatureView  {...this.props} />
                     <BiscuitsView biscuitsCount={this.props.biscuitsCount} />
                 </BiscuitMachineView>
@@ -26,11 +27,12 @@ class App extends Component {
 }
 
 const mapStateToProps = state => {
+    const { pausedComponent, processingComponent, biscuitsCount, temperature } = state;
     return {
-        pausedComponent: state.pausedComponent,
-        processingComponent: state.processingComponent,
-        biscuitsCount: state.biscuitsCount,
-        temperature: state.temperature
+        pausedComponent,
+        processingComponent,
+        biscuitsCount,
+        temperature
     };
 };
 
@@ -40,6 +42,13 @@ const mapDispatchToProps = dispatch => {
         onStop: () => dispatch({ type: "STOP", mode: "STOP" }),
         onPause: () => dispatch({ type: "PAUSE", mode: "PAUSE" })
     };
+};
+
+App.propTypes = {
+    onStart: PropTypes.func,
+    onStop: PropTypes.func,
+    onPause: PropTypes.func,
+    biscuitsCount: PropTypes.number
 };
 
 export default connect(
