@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from "react-redux";
-import { DeviceView } from './views'
-import { BiscuitMachineView, SwitchView, BiscuitsView, TemperatureView } from './views';
+import { Device } from './views'
+import { BiscuitMachine, Switch, BiscuitsCount, Temperature } from './views';
 
 class App extends Component {
     constructor(props) {
@@ -12,15 +12,15 @@ class App extends Component {
     render() {
         return (
             <React.Fragment>
-                <BiscuitMachineView>
-                    <SwitchView onStart={this.props.onStart} onPause={this.props.onPause} onStop={this.props.onStop} />
-                    <DeviceView deviceName={'Motor'}  {...this.props} />
-                    <DeviceView deviceName={'Extruder'} {...this.props} />
-                    <DeviceView deviceName={'Stamper'} {...this.props} />
-                    <DeviceView deviceName={'Oven'} {...this.props} />
-                    <TemperatureView temperature={this.props.temperature} />
-                    <BiscuitsView biscuitsCount={this.props.biscuitsCount} />
-                </BiscuitMachineView>
+                <BiscuitMachine>
+                    <Switch onStart={this.props.onStart} onPause={this.props.onPause} onStop={this.props.onStop} />
+                    <Device deviceName={'Motor'}  {...this.props} />
+                    <Device deviceName={'Extruder'} {...this.props} />
+                    <Device deviceName={'Stamper'} {...this.props} />
+                    <Device deviceName={'Oven'} {...this.props} />
+                    <Temperature temperature={this.props.temperature} />
+                    <BiscuitsCount biscuitsCount={this.props.biscuitsCount} />
+                </BiscuitMachine>
             </React.Fragment>
         );
     }
